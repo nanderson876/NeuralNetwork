@@ -1,13 +1,15 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.Scanner;
 import java.lang.Math;
 
 /**
- * NeuralNetwork class. This holds almost all of the actual functions of this program
+ * Abstract Neural Network covering the basics and allowing for simpler creation of more complicated and detailed neural networks
+ * 
+ * Date Last Modified: 09/16/20
+ * @author Nathan Anderson
  */
-public class NeuralNetwork {
+public abstract class NeuralNetwork {
     private double[] inputs; // int array to contain the inputs
     private double[] weights; // double array that will contain the weights for the inputs
 
@@ -20,9 +22,7 @@ public class NeuralNetwork {
         inputs = new double[numInputs];
         weights = new double[numInputs]; // Creates the array
 
-        for (int i = 0; i < weights.length; i++) {
-            weights[i] = Math.random(); // Fills the array with random weights
-        }
+        assignRandomWeights();
     }
 
     /**
@@ -46,11 +46,20 @@ public class NeuralNetwork {
                 for (int i = 0; i < weightStrings.length; i++) {
                     weights[i] = Double.parseDouble(weightStrings[i]);
                 }
+            } else {
+                assignRandomWeights();
             }
         } else {
-            for (int i = 0; i < weights.length; i++) {
-                weights[i] = Math.random();
-            }
+            assignRandomWeights();
+        }
+    }
+
+    /**
+     * Assigns a random weight for each input. This is placed in a seperate method because it is used across both constructors.
+     */
+    private void assignRandomWeights() {
+        for (int i = 0; i < weights.length; i++) {
+            weights[i] = Math.random();
         }
     }
 
@@ -59,28 +68,31 @@ public class NeuralNetwork {
      *
      * @param values : Variable arguments of int values to be collected into the inputs array
      */
-    public void collectInputs(int ... values) {
+    public void collectInputs(double ... values) {
         // Only collects into inputs array if the number of inputs matches the number specified in the constuctor
         if (inputs.length == values.length) {
             for (int i = 0; i < inputs.length; i++) {
                 inputs[i] = values[i];
             }
-            mapInputs();
         } else {
             return;
         }
     }
 
     /**
-     * Maps every input to a normalized value
-     * Since this neural network has one specific goal, the mapped values are hard-coded in. Could change that for a more generalized program.
+     * Maps every input to a specified range
+     * 
+     * @param inputRanges : 2-D array containing the ranges of each input.  
+     * @param newRanges   : 2-D array containing the ranges for each output.
+     * Note: Each parameter must have a length equal to the number of inputs, and each nested array must have exactly 2 values, a lower and upper bound.
      */
-    private void mapInputs() {
-        for (int i = 0; i < inputs.length; i++) {
-            if (i == 0 || i == 2) {
-                inputs[i] = mapValues(inputs[i], 0, 100, 0, 1);
-            } else {
-                inputs[i] = mapValues(inputs[i], 43, 45, 1, -1);
+    public void mapInputs(double[][] inputRanges, double[][] newRanges) {
+        // Verifying the parameter value
+        if (inputRanges.length == inputs.length && newRanges.length == inputs.length &&
+            inputRanges[0].length == 2 && newRanges[0].length == 2) {
+
+            for (int i = 0; i < inputs.length; i++) {
+                inputs[i] = mapValues(inputs[i], inputRanges[i][0], inputRanges[i][1], newRanges[i][0], newRanges[i][1]);
             }
         }
     }
@@ -103,26 +115,18 @@ public class NeuralNetwork {
     }
 
     /**
-     * Overrides the Object toString method, returning the a String representing the inputs array
+     * Overrides the Object toString method, returning basic information about the Object
      * 
-     * @return : Representation of the inputs array
+     * @return : Information about the network such as number of inputs a String representation of the input and weight arrays
      */
     @Override
     public String toString() {
-        String st = "[" + inputs[0];
-        for (int i = 1; i < inputs.length; i++) {
-            st += ", " + inputs[i];
+        String inputString = "[" + this.inputs[0];
+        String weightString = "[" + this.weights[0];
+        for (int i = 0; i < this.inputs.length; i++) {
+            inputString += ", " + inputs[i];
+            weightString += ", " + weights[i];
         }
-        return st + "]";
-    }
-
-    /**
-     * The main method in this class file is only used for testing, the real main method is in the Main class
-     *
-     * @param args : String array of command-line arguments
-     */
-    public static void main(String[] args) {
-        // The main purpose of mapping values in this program is converting + to 1 and - to -1
-        System.out.println(mapValues('+', '+', '-', 1, -1));
+        return String.format("Number of Inputs/Weights: %d\nInputs:\t%s\nWeights:\t%s\n", inputs.length, inputString, weightString);
     }
 }
