@@ -7,8 +7,15 @@
  */
 public class Main {
 
+    /**
+     * Main method
+     *
+     * @param args : String array of command-line arguments
+     */
     public static void main(String[] args) {
         NeuralNetwork network = new NeuralNetwork(3);
+        network.collectInputs(3, '-', 2);
+        System.out.println(network);
     }
 
 }
