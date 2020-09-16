@@ -1,5 +1,7 @@
-When completed, this program will take 3 inputs: 2 integer values between 0 and 99, and a char that is either '+' or '-'.
+This program creates an abstract NeuralNetwork class to simplify the creation of more specific and detailed single-layer neural networks.
 
-By either training or through uploading pre-trained weights through a file, the program will improve itself until it is able to correctly answer this type of problem
+Things I currently plan on adding evenutally:
+    - Multi-layer compatability
+    - More general inputs (different data types other than just doubles)
 
 This is my first neural network project that wasn't guided by a video series, so if anyone ever stumbles upon this then any and all feedback would be greatly appreciated.
